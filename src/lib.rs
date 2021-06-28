@@ -109,9 +109,22 @@ impl<T, const N: usize> Lobby<T, N> {
     /// lobby.push(1);
     /// assert_eq!(Some(&1), lobby.nth(1));
     /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `n` is greater than or equal to `N`.
+    ///
+    /// ```should_panic
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// lobby.push(0);
+    ///
+    /// let _ = lobby.nth(3);
+    /// ```
     #[inline]
     pub const fn nth(&self, n: usize) -> Option<&T> {
-        let idx = if n > N {
+        let idx = if n >= N {
             N
         } else {
             Self::mod_incr(self.head, n)
