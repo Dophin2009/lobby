@@ -301,6 +301,16 @@ impl<T, const N: usize> Lobby<T, N> {
     }
 }
 
+impl<T, const N: usize> IntoIterator for Lobby<T, N> {
+    type Item = T;
+    type IntoIter = IntoIter<T, N>;
+
+    #[inline]
+    fn into_iter(self) -> IntoIter<T, N> {
+        IntoIter { inner: self }
+    }
+}
+
 #[derive(Debug)]
 pub struct Iter<'a, T, const N: usize> {
     inner: &'a Lobby<T, N>,
@@ -319,6 +329,19 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
         } else {
             self.inner.nth(self.idx - 1)
         }
+    }
+}
+
+#[derive(Debug)]
+pub struct IntoIter<T, const N: usize> {
+    inner: Lobby<T, N>,
+}
+
+impl<T, const N: usize> Iterator for IntoIter<T, N> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.shift()
     }
 }
 
@@ -533,12 +556,19 @@ mod test {
 
         x.push(0);
         assert_eq!(vec![&0], x.iter().collect::<Vec<_>>());
+        assert_eq!(vec![0], x.clone().into_iter().collect::<Vec<_>>());
 
         x.push(1);
         x.push(2);
         assert_eq!(vec![&0, &1, &2], x.iter().collect::<Vec<_>>());
+        assert_eq!(vec![0, 1, 2], x.clone().into_iter().collect::<Vec<_>>());
 
         x.push(3);
         assert_eq!(vec![&1, &2, &3], x.iter().collect::<Vec<_>>());
+        assert_eq!(vec![1, 2, 3], x.clone().into_iter().collect::<Vec<_>>());
+
+        x.shift();
+        assert_eq!(vec![&2, &3], x.iter().collect::<Vec<_>>());
+        assert_eq!(vec![2, 3], x.into_iter().collect::<Vec<_>>());
     }
 }
