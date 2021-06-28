@@ -84,11 +84,9 @@ impl<T, const N: usize> Lobby<T, N> {
     /// lobby.push(1);
     /// assert_eq!(Some(&1), lobby.nth(1));
     /// ```
-    //
-    // TODO: Fix; array index does not correspond to order.
     #[inline]
-    pub const fn nth<const C: usize>(&self, n: usize) -> Option<&T> {
-        self.arr[n].as_ref()
+    pub const fn nth(&self, n: usize) -> Option<&T> {
+        self.arr[Self::increase_counter(self.head, n)].as_ref()
     }
 
     /// Push a new item to the lobby, returning the head if the lobby is currently full.
