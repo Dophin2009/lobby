@@ -235,4 +235,38 @@ mod test {
         x.shift();
         assert!(x.is_empty());
     }
+
+    #[test]
+    fn test_is_full() {
+        let mut x = Lobby::new([None, None, None]);
+        assert!(!x.is_full());
+
+        // [0, _, _]
+        x.push(0);
+        assert!(!x.is_full());
+
+        // [0, 1, _]
+        x.push(1);
+        assert!(!x.is_full());
+
+        // [0, 1, 2]
+        x.push(2);
+        assert!(x.is_full());
+
+        // [3, 1, 2]
+        x.push(3);
+        assert!(x.is_full());
+
+        // [3, _, 2]
+        x.shift();
+        assert!(!x.is_full());
+
+        // [3, _, 2]
+        x.shift();
+        assert!(!x.is_full());
+
+        // [_, _, _]
+        x.shift();
+        assert!(!x.is_full());
+    }
 }
