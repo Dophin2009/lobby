@@ -9,7 +9,7 @@
 //! ```
 //! use lobby::Lobby;
 //!
-//! let mut m = Lobby::new();
+//! let mut m = Lobby::new([None, None, None]);
 //!
 //! m.push(0);
 //! m.push(1);

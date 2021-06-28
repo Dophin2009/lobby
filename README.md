@@ -21,7 +21,7 @@ And use it:
 use lobby::Lobby;
 
 fn main() {
-    let mut m = Lobby::new();
+    let mut m = Lobby::new([None, None, None]);
 
     m.push(0);
     m.push(1);
