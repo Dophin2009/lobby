@@ -114,7 +114,7 @@ impl<T, const N: usize> Lobby<T, N> {
     pub fn push(&mut self, v: T) -> Option<T> {
         if self.arr[self.tail].is_some() {
             // Increment tail position to insert at next spot.
-            self.tail = Self::increment_counter(self.tail);
+            self.tail = Self::increase_counter(self.tail, 1);
         }
 
         // Make push.
@@ -123,7 +123,7 @@ impl<T, const N: usize> Lobby<T, N> {
 
         // Head position should be moved if the new element overrides an old.
         if v.is_some() {
-            self.head = Self::increment_counter(self.head);
+            self.head = Self::increase_counter(self.head, 1);
         }
 
         v
@@ -149,7 +149,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.head]);
 
-        let next = Self::increment_counter(self.head);
+        let next = Self::increase_counter(self.head, 1);
         if self.arr[next].is_some() {
             self.head = next;
         }
@@ -177,7 +177,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.tail]);
 
-        let prev = Self::decrement_counter(self.tail);
+        let prev = Self::decrease_counter(self.tail, 1);
         if self.arr[prev].is_some() {
             self.tail = prev;
         }
@@ -223,25 +223,20 @@ impl<T, const N: usize> Lobby<T, N> {
     /// ```
     #[inline]
     pub const fn is_full(&self) -> bool {
-        Self::increment_counter(self.tail) == self.head
+        Self::increase_counter(self.tail, 1) == self.head
     }
 
     #[inline]
-    const fn increment_counter(mut counter: usize) -> usize {
-        counter += 1;
-        if counter >= N {
-            counter = 0;
-        }
-
-        counter
+    const fn increase_counter(counter: usize, d: usize) -> usize {
+        (counter + d) % N
     }
 
     #[inline]
-    const fn decrement_counter(counter: usize) -> usize {
-        if counter == 0 {
-            N - 1
+    const fn decrease_counter(counter: usize, d: usize) -> usize {
+        if counter >= d {
+            counter - d
         } else {
-            counter - 1
+            N - ((counter as i32 - d as i32).abs() as usize % N)
         }
     }
 }
