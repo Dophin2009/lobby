@@ -320,7 +320,7 @@ where
 {
     #[inline]
     fn eq(&self, other: &[Option<T>; N]) -> bool {
-        self.iter_full().eq(other.iter().map(|v| v.as_ref()))
+        self.iter().with_full().eq(other.iter().map(|v| v.as_ref()))
     }
 }
 
@@ -328,14 +328,6 @@ impl<T, const N: usize> Lobby<T, N> {
     #[inline]
     pub fn iter(&self) -> Iter<'_, T, N> {
         Iter {
-            inner: &self,
-            idx: 0,
-        }
-    }
-
-    #[inline]
-    pub fn iter_full(&self) -> IterFull<'_, T, N> {
-        IterFull {
             inner: &self,
             idx: 0,
         }
@@ -357,6 +349,16 @@ pub struct Iter<'a, T, const N: usize> {
     inner: &'a Lobby<T, N>,
 
     idx: usize,
+}
+
+impl<'a, T, const N: usize> Iter<'a, T, N> {
+    #[inline]
+    pub fn with_full(self) -> IterFull<'a, T, N> {
+        IterFull {
+            inner: self.inner,
+            idx: self.idx,
+        }
+    }
 }
 
 impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
@@ -404,6 +406,26 @@ impl<T, const N: usize> Iterator for IntoIter<T, N> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.inner.shift()
+    }
+}
+
+impl<'a, T, const N: usize> IntoIter<T, N> {
+    #[inline]
+    pub fn with_full(self) -> IntoIterFull<T, N> {
+        IntoIterFull { inner: self.inner }
+    }
+}
+
+#[derive(Debug)]
+pub struct IntoIterFull<T, const N: usize> {
+    inner: Lobby<T, N>,
+}
+
+impl<T, const N: usize> Iterator for IntoIterFull<T, N> {
+    type Item = Option<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(self.inner.shift())
     }
 }
 
