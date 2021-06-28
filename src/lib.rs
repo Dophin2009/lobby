@@ -96,3 +96,35 @@ const fn decrement_counter<const N: usize>(counter: usize) -> usize {
         counter - 1
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_push() {
+        let mut x = Lobby::new([None, None, None]);
+
+        x.push(0);
+        assert_eq!([Some(0), None, None], x.arr);
+        assert_eq!((0, 0), (x.head, x.tail));
+
+        x.push(1);
+        assert_eq!([Some(0), Some(1), None], x.arr);
+        assert_eq!((0, 1), (x.head, x.tail));
+
+        x.push(2);
+        assert_eq!([Some(0), Some(1), Some(2)], x.arr);
+        assert_eq!((0, 2), (x.head, x.tail));
+
+        let v0 = x.push(3);
+        assert_eq!(Some(0), v0);
+        assert_eq!([Some(3), Some(1), Some(2)], x.arr);
+        assert_eq!((1, 0), (x.head, x.tail));
+
+        let v1 = x.push(4);
+        assert_eq!(Some(1), v1);
+        assert_eq!([Some(3), Some(4), Some(2)], x.arr);
+        assert_eq!((2, 1), (x.head, x.tail));
+    }
+}
