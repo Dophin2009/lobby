@@ -127,4 +127,30 @@ mod test {
         assert_eq!([Some(3), Some(4), Some(2)], x.arr);
         assert_eq!((2, 1), (x.head, x.tail));
     }
+
+    #[test]
+    fn test_pop() {
+        let mut x = Lobby::new([None, None, None]);
+        x.push(0);
+        x.push(1);
+        x.push(2);
+
+        assert_eq!([Some(0), Some(1), Some(2)], x.arr);
+        assert_eq!((0, 2), (x.head, x.tail));
+
+        let v2 = x.pop();
+        assert_eq!(Some(2), v2);
+        assert_eq!([Some(0), Some(1), None], x.arr);
+        assert_eq!((0, 1), (x.head, x.tail));
+
+        let v1 = x.pop();
+        assert_eq!(Some(1), v1);
+        assert_eq!([Some(0), None, None], x.arr);
+        assert_eq!((0, 0), (x.head, x.tail));
+
+        let v0 = x.pop();
+        assert_eq!(Some(0), v0);
+        assert_eq!([None, None, None], x.arr);
+        assert_eq!((0, 0), (x.head, x.tail));
+    }
 }
