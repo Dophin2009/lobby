@@ -1,5 +1,6 @@
 use std::mem;
 
+/// A const-size queue.
 #[derive(Debug, Clone)]
 pub struct Lobby<T, const N: usize> {
     arr: [Option<T>; N],
@@ -9,7 +10,19 @@ pub struct Lobby<T, const N: usize> {
 }
 
 impl<T, const N: usize> Lobby<T, N> {
-    // Hopefully some fix to <https://github.com/rust-lang/rust/issues/44796>.
+    /// Create a new Lobby. The caller **must** pass in an array of all [`None`].
+    ///
+    /// # Limitation
+    ///
+    /// Until some workaround/fix for [#44796](https://github.com/rust-lang/rust/issues/44796)
+    /// becomes available, an initial array must be passed in.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None, None]);
+    /// lobby.push(0);
+    /// ```
     #[inline]
     pub const fn new(arr: [Option<T>; N]) -> Self {
         Self {
@@ -19,21 +32,84 @@ impl<T, const N: usize> Lobby<T, N> {
         }
     }
 
+    /// Get the head item.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// assert_eq!(None, lobby.first());
+    ///
+    /// lobby.push(0);
+    /// assert_eq!(Some(&0), lobby.first());
+    ///
+    /// lobby.push(1);
+    /// assert_eq!(Some(&0), lobby.first());
+    /// ```
     #[inline]
     pub const fn first(&self) -> Option<&T> {
         self.arr[self.head].as_ref()
     }
 
+    /// Get the tail item.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// assert_eq!(None, lobby.last());
+    ///
+    /// lobby.push(0);
+    /// assert_eq!(Some(&0), lobby.last());
+    ///
+    /// lobby.push(1);
+    /// assert_eq!(Some(&1), lobby.last());
+    /// ```
     #[inline]
     pub const fn last(&self) -> Option<&T> {
         self.arr[self.tail].as_ref()
     }
 
+    /// Get the nth item.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// assert_eq!(None, lobby.nth(1));
+    ///
+    /// lobby.push(0);
+    /// assert_eq!(None, lobby.nth(1));
+    ///
+    /// lobby.push(1);
+    /// assert_eq!(Some(&1), lobby.nth(1));
+    /// ```
+    //
+    // TODO: Fix; array index does not correspond to order.
     #[inline]
     pub const fn nth<const C: usize>(&self, n: usize) -> Option<&T> {
         self.arr[n].as_ref()
     }
 
+    /// Push a new item to the lobby, returning the head if the lobby is currently full.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    ///
+    /// lobby.push(0);
+    /// assert_eq!(Some(&0), lobby.first());
+    ///
+    /// lobby.push(1);
+    /// assert_eq!(Some(&0), lobby.first());
+    ///
+    /// lobby.push(2);
+    /// assert_eq!(Some(&0), lobby.first());
+    ///
+    /// lobby.push(3);
+    /// assert_eq!(Some(&1), lobby.first());
+    /// ```
     #[inline]
     pub fn push(&mut self, v: T) -> Option<T> {
         if self.arr[self.tail].is_some() {
@@ -53,6 +129,21 @@ impl<T, const N: usize> Lobby<T, N> {
         v
     }
 
+    /// Shift out the head item from the lobby.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// lobby.push(0);
+    /// lobby.push(1);
+    /// lobby.push(2);
+    ///
+    /// assert_eq!(Some(0), lobby.shift());
+    /// assert_eq!(Some(1), lobby.shift());
+    /// assert_eq!(Some(2), lobby.shift());
+    /// assert_eq!(None, lobby.shift());
+    /// ```
     #[inline]
     pub fn shift(&mut self) -> Option<T> {
         let mut v = None;
@@ -66,6 +157,21 @@ impl<T, const N: usize> Lobby<T, N> {
         v
     }
 
+    /// Pop off the tail item from the lobby.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// lobby.push(0);
+    /// lobby.push(1);
+    /// lobby.push(2);
+    ///
+    /// assert_eq!(Some(2), lobby.pop());
+    /// assert_eq!(Some(1), lobby.pop());
+    /// assert_eq!(Some(0), lobby.pop());
+    /// assert_eq!(None, lobby.pop());
+    /// ```
     #[inline]
     pub fn pop(&mut self) -> Option<T> {
         let mut v = None;
@@ -79,11 +185,42 @@ impl<T, const N: usize> Lobby<T, N> {
         v
     }
 
+    /// Returns `true` if the Lobby is empty, `false` if it is not.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// assert!(lobby.is_empty());
+    ///
+    /// lobby.push(0);
+    /// assert!(!lobby.is_empty());
+    ///
+    /// lobby.shift();
+    /// assert!(lobby.is_empty());
+    /// ```
     #[inline]
     pub const fn is_empty(&self) -> bool {
         self.head == self.tail && self.arr[self.head].is_none()
     }
 
+    /// Returns `true` if the Lobby is full, `false` if it is not.
+    ///
+    /// ```
+    /// use lobby::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    /// assert!(!lobby.is_full());
+    ///
+    /// lobby.push(0);
+    /// assert!(!lobby.is_full());
+    ///
+    /// lobby.push(1);
+    /// assert!(!lobby.is_full());
+    ///
+    /// lobby.push(2);
+    /// assert!(lobby.is_full());
+    /// ```
     #[inline]
     pub const fn is_full(&self) -> bool {
         increment_counter::<N>(self.tail) == self.head
