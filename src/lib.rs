@@ -7,7 +7,7 @@
 //! ```
 //!
 //! ```
-//! use lobby::Lobby;
+//! use lobby_queue::Lobby;
 //!
 //! let mut m = Lobby::new([None, None, None]);
 //!
@@ -42,7 +42,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// becomes available, an initial array must be passed in.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None, None]);
     /// lobby.push(0);
@@ -60,7 +60,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Get the head item.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// assert_eq!(None, lobby.first());
@@ -79,7 +79,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Get the tail item.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// assert_eq!(None, lobby.last());
@@ -98,7 +98,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Get the nth item.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// assert_eq!(None, lobby.nth(1));
@@ -115,7 +115,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Panics if `n` is greater than or equal to `N`.
     ///
     /// ```should_panic
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// lobby.push(0);
@@ -136,7 +136,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Push a new item to the lobby, returning the head if the lobby is currently full.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     ///
@@ -176,7 +176,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Shift out the head item from the lobby.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// lobby.push(0);
@@ -208,7 +208,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Pop off the tail item from the lobby.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// lobby.push(0);
@@ -240,7 +240,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Returns `true` if the Lobby is empty, `false` if it is not.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// assert!(lobby.is_empty());
@@ -259,7 +259,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// Returns `true` if the Lobby is full, `false` if it is not.
     ///
     /// ```
-    /// use lobby::Lobby;
+    /// use lobby_queue::Lobby;
     ///
     /// let mut lobby = Lobby::new([None, None, None]);
     /// assert!(!lobby.is_full());

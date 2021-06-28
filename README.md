@@ -1,27 +1,27 @@
-[![Build status](https://github.com/Dophin2009/lobby/workflows/ci/badge.svg)](https://github.com/Dophin2009/lobby/actions)
-[![Crates.io](https://img.shields.io/crates/v/lobby.svg)](https://crates.io/crates/lobby)
-[![Docs.rs](https://docs.rs/lobby/badge.svg)](https://docs.rs/lobby)
+[![Build status](https://github.com/Dophin2009/lobby-queue/workflows/ci/badge.svg)](https://github.com/Dophin2009/lobby/actions)
+[![Crates.io](https://img.shields.io/crates/v/lobby-queue.svg)](https://crates.io/crates/lobby)
+[![Docs.rs](https://docs.rs/lobby-queue/badge.svg)](https://docs.rs/lobby)
 
-# Lobby
+# lobby-queue
 
 A const-size queue-like data structure.
 
 ## Usage
 
-Add Lobby to your `Cargo.toml`:
+Add lobby-queue to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lobby = "0.1"
+lobby-queue = "0.1"
 ```
 
 And use it:
 
 ```rust
-use lobby::Lobby;
+use lobby_queue::Lobby;
 
 fn main() {
-    let mut m = Lobby::new([None, None, None]);
+    let mut m = lobby_queue::new([None, None, None]);
 
     m.push(0);
     m.push(1);

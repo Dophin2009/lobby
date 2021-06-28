@@ -1,5 +1,5 @@
 [package]
-name = "lobby"
+name = "lobby-queue"
 version = "0.1.0"
 authors = ["Eric Zhao <21zhaoe@protonmail.com>"]
 license = "MIT"
