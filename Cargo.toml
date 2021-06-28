@@ -8,4 +8,7 @@ homepage = "https://github.com/Dophin2009/lobby"
 repository = "https://github.com/Dophin2009/lobby.git"
 edition = "2018"
 
+[package.metadata]
+msrv = "1.51.0"
+
 [dependencies]
