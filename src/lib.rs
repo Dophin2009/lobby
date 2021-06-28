@@ -170,8 +170,6 @@ impl<T, const N: usize> Lobby<T, N> {
             self.len += 1;
         }
 
-        println!("{}", self.len);
-
         v
     }
 
@@ -316,10 +314,28 @@ where
     }
 }
 
+impl<T, const N: usize> PartialEq<[Option<T>; N]> for Lobby<T, N>
+where
+    T: PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &[Option<T>; N]) -> bool {
+        self.iter_full().eq(other.iter().map(|v| v.as_ref()))
+    }
+}
+
 impl<T, const N: usize> Lobby<T, N> {
     #[inline]
     pub fn iter(&self) -> Iter<'_, T, N> {
         Iter {
+            inner: &self,
+            idx: 0,
+        }
+    }
+
+    #[inline]
+    pub fn iter_full(&self) -> IterFull<'_, T, N> {
+        IterFull {
             inner: &self,
             idx: 0,
         }
@@ -353,6 +369,27 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
             None
         } else {
             self.inner.nth(self.idx - 1)
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct IterFull<'a, T, const N: usize> {
+    inner: &'a Lobby<T, N>,
+
+    idx: usize,
+}
+
+impl<'a, T, const N: usize> Iterator for IterFull<'a, T, N> {
+    type Item = Option<&'a T>;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        self.idx += 1;
+        if self.idx > N {
+            None
+        } else {
+            Some(self.inner.nth(self.idx - 1))
         }
     }
 }
@@ -586,14 +623,15 @@ mod test {
         y.push(0);
         y.push(1);
 
-        assert!(x == y);
+        assert_eq!(x, y);
 
         y.pop();
         x.push(0);
         x.shift();
         x.shift();
 
-        assert!(x == y);
+        assert_eq!(x, y);
+        assert_eq!(x, [Some(0), None, None]);
     }
 
     #[test]
