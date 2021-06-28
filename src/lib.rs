@@ -29,6 +29,8 @@ pub struct Lobby<T, const N: usize> {
 
     head: usize,
     tail: usize,
+
+    len: usize,
 }
 
 impl<T, const N: usize> Lobby<T, N> {
@@ -51,6 +53,7 @@ impl<T, const N: usize> Lobby<T, N> {
             arr,
             head: 0,
             tail: 0,
+            len: 0,
         }
     }
 
@@ -150,7 +153,11 @@ impl<T, const N: usize> Lobby<T, N> {
         // Head position should be moved if the new element overrides an old.
         if v.is_some() {
             self.head = Self::mod_incr(self.head, 1);
+        } else {
+            self.len += 1;
         }
+
+        println!("{}", self.len);
 
         v
     }
@@ -180,6 +187,10 @@ impl<T, const N: usize> Lobby<T, N> {
             self.head = next;
         }
 
+        if v.is_some() {
+            self.len -= 1;
+        }
+
         v
     }
 
@@ -206,6 +217,10 @@ impl<T, const N: usize> Lobby<T, N> {
         let prev = Self::mod_decr(self.tail, 1);
         if self.arr[prev].is_some() {
             self.tail = prev;
+        }
+
+        if v.is_some() {
+            self.len -= 1;
         }
 
         v
@@ -253,6 +268,16 @@ impl<T, const N: usize> Lobby<T, N> {
     }
 
     #[inline]
+    pub const fn len(&self) -> usize {
+        self.len
+    }
+
+    #[inline]
+    pub const fn capacity(&self) -> usize {
+        N
+    }
+
+    #[inline]
     const fn mod_incr(counter: usize, d: usize) -> usize {
         (counter + d) % N
     }
@@ -279,24 +304,29 @@ mod test {
         x.push(0);
         assert_eq!([Some(0), None, None], x.arr);
         assert_eq!((0, 0), (x.head, x.tail));
+        assert_eq!(1, x.len());
 
         x.push(1);
         assert_eq!([Some(0), Some(1), None], x.arr);
         assert_eq!((0, 1), (x.head, x.tail));
+        assert_eq!(2, x.len());
 
         x.push(2);
         assert_eq!([Some(0), Some(1), Some(2)], x.arr);
         assert_eq!((0, 2), (x.head, x.tail));
+        assert_eq!(3, x.len());
 
         let v0 = x.push(3);
         assert_eq!(Some(0), v0);
         assert_eq!([Some(3), Some(1), Some(2)], x.arr);
         assert_eq!((1, 0), (x.head, x.tail));
+        assert_eq!(3, x.len());
 
         let v1 = x.push(4);
         assert_eq!(Some(1), v1);
         assert_eq!([Some(3), Some(4), Some(2)], x.arr);
         assert_eq!((2, 1), (x.head, x.tail));
+        assert_eq!(3, x.len());
     }
 
     #[test]
@@ -308,26 +338,31 @@ mod test {
 
         assert_eq!([Some(0), Some(1), Some(2)], x.arr);
         assert_eq!((0, 2), (x.head, x.tail));
+        assert_eq!(3, x.len());
 
         let v0 = x.shift();
         assert_eq!(Some(0), v0);
         assert_eq!([None, Some(1), Some(2)], x.arr);
         assert_eq!((1, 2), (x.head, x.tail));
+        assert_eq!(2, x.len());
 
         let v1 = x.shift();
         assert_eq!(Some(1), v1);
         assert_eq!([None, None, Some(2)], x.arr);
         assert_eq!((2, 2), (x.head, x.tail));
+        assert_eq!(1, x.len());
 
         let v2 = x.shift();
         assert_eq!(Some(2), v2);
         assert_eq!([None, None, None], x.arr);
         assert_eq!((2, 2), (x.head, x.tail));
+        assert_eq!(0, x.len());
 
         let ve = x.shift();
         assert_eq!(None, ve);
         assert_eq!([None, None, None], x.arr);
         assert_eq!((2, 2), (x.head, x.tail));
+        assert_eq!(0, x.len());
     }
 
     #[test]
@@ -339,26 +374,31 @@ mod test {
 
         assert_eq!([Some(0), Some(1), Some(2)], x.arr);
         assert_eq!((0, 2), (x.head, x.tail));
+        assert_eq!(3, x.len());
 
         let v2 = x.pop();
         assert_eq!(Some(2), v2);
         assert_eq!([Some(0), Some(1), None], x.arr);
         assert_eq!((0, 1), (x.head, x.tail));
+        assert_eq!(2, x.len());
 
         let v1 = x.pop();
         assert_eq!(Some(1), v1);
         assert_eq!([Some(0), None, None], x.arr);
         assert_eq!((0, 0), (x.head, x.tail));
+        assert_eq!(1, x.len());
 
         let v0 = x.pop();
         assert_eq!(Some(0), v0);
         assert_eq!([None, None, None], x.arr);
         assert_eq!((0, 0), (x.head, x.tail));
+        assert_eq!(0, x.len());
 
         let ve = x.pop();
         assert_eq!(None, ve);
         assert_eq!([None, None, None], x.arr);
         assert_eq!((0, 0), (x.head, x.tail));
+        assert_eq!(0, x.len());
     }
 
     #[test]
