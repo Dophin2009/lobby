@@ -76,6 +76,12 @@ impl<T, const N: usize> Lobby<T, N> {
         self.arr[self.head].as_ref()
     }
 
+    /// Get a mutable reference to the head item. See [`Self::first`].
+    #[inline]
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        self.arr[self.head].as_mut()
+    }
+
     /// Get the tail item.
     ///
     /// ```
@@ -93,6 +99,12 @@ impl<T, const N: usize> Lobby<T, N> {
     #[inline]
     pub const fn last(&self) -> Option<&T> {
         self.arr[self.tail].as_ref()
+    }
+
+    /// Get a mutable reference to the head item. See [`Self::last`].
+    #[inline]
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        self.arr[self.tail].as_mut()
     }
 
     /// Get the nth item.
