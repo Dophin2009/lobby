@@ -1,7 +1,7 @@
 [package]
 name = "lobby"
 version = "0.1.0"
-authors = "Eric Zhao <21zhaoe@protonmail.com>"
+authors = ["Eric Zhao <21zhaoe@protonmail.com>"]
 license = "MIT"
 description = "Const-size queue."
 homepage = "https://github.com/Dophin2009/lobby"
