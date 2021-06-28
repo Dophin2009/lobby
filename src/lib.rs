@@ -291,6 +291,35 @@ impl<T, const N: usize> Lobby<T, N> {
             counter + N - d
         }
     }
+
+    #[inline]
+    pub fn iter(&self) -> Iter<'_, T, N> {
+        Iter {
+            inner: &self,
+            idx: 0,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct Iter<'a, T, const N: usize> {
+    inner: &'a Lobby<T, N>,
+
+    idx: usize,
+}
+
+impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
+    type Item = &'a T;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        self.idx += 1;
+        if self.idx > N {
+            None
+        } else {
+            self.inner.nth(self.idx - 1)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -496,5 +525,20 @@ mod test {
         assert_eq!(0, L::mod_decr(x, 6));
         assert_eq!(2, L::mod_decr(x, 8));
         assert_eq!(1, L::mod_decr(x, 9));
+    }
+
+    #[test]
+    fn test_iter() {
+        let mut x = Lobby::new([None, None, None]);
+
+        x.push(0);
+        assert_eq!(vec![&0], x.iter().collect::<Vec<_>>());
+
+        x.push(1);
+        x.push(2);
+        assert_eq!(vec![&0, &1, &2], x.iter().collect::<Vec<_>>());
+
+        x.push(3);
+        assert_eq!(vec![&1, &2, &3], x.iter().collect::<Vec<_>>());
     }
 }
