@@ -1,5 +1,24 @@
 //! This crate provides a const-size queue-like data structure. When full, pushing new items will
 //! remove the head (first-added) items.
+//!
+//! ```toml
+//! [dependencies]
+//! lobby = "0.1"
+//! ```
+//!
+//! ```
+//! use lobby::Lobby;
+//!
+//! let mut m = Lobby::new();
+//!
+//! m.push(0);
+//! m.push(1);
+//! m.push(2);
+//! assert_eq!(Some(&0), m.first());
+//!
+//! m.push(3);
+//! assert_eq!(Some(&1), m.first());
+//! ```
 
 use std::mem;
 
