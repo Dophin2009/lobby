@@ -114,7 +114,7 @@ impl<T, const N: usize> Lobby<T, N> {
     pub fn push(&mut self, v: T) -> Option<T> {
         if self.arr[self.tail].is_some() {
             // Increment tail position to insert at next spot.
-            self.tail = increment_counter::<N>(self.tail);
+            self.tail = Self::increment_counter(self.tail);
         }
 
         // Make push.
@@ -123,7 +123,7 @@ impl<T, const N: usize> Lobby<T, N> {
 
         // Head position should be moved if the new element overrides an old.
         if v.is_some() {
-            self.head = increment_counter::<N>(self.head);
+            self.head = Self::increment_counter(self.head);
         }
 
         v
@@ -149,7 +149,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.head]);
 
-        let next = increment_counter::<N>(self.head);
+        let next = Self::increment_counter(self.head);
         if self.arr[next].is_some() {
             self.head = next;
         }
@@ -177,7 +177,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.tail]);
 
-        let prev = decrement_counter::<N>(self.tail);
+        let prev = Self::decrement_counter(self.tail);
         if self.arr[prev].is_some() {
             self.tail = prev;
         }
@@ -223,26 +223,26 @@ impl<T, const N: usize> Lobby<T, N> {
     /// ```
     #[inline]
     pub const fn is_full(&self) -> bool {
-        increment_counter::<N>(self.tail) == self.head
-    }
-}
-
-#[inline]
-const fn increment_counter<const N: usize>(mut counter: usize) -> usize {
-    counter += 1;
-    if counter >= N {
-        counter = 0;
+        Self::increment_counter(self.tail) == self.head
     }
 
-    counter
-}
+    #[inline]
+    const fn increment_counter(mut counter: usize) -> usize {
+        counter += 1;
+        if counter >= N {
+            counter = 0;
+        }
 
-#[inline]
-const fn decrement_counter<const N: usize>(counter: usize) -> usize {
-    if counter == 0 {
-        N - 1
-    } else {
-        counter - 1
+        counter
+    }
+
+    #[inline]
+    const fn decrement_counter(counter: usize) -> usize {
+        if counter == 0 {
+            N - 1
+        } else {
+            counter - 1
+        }
     }
 }
 
