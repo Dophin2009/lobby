@@ -25,6 +25,11 @@ impl<T, const N: usize> Lobby<T, N> {
     }
 
     #[inline]
+    pub const fn last(&self) -> Option<&T> {
+        self.arr[self.tail].as_ref()
+    }
+
+    #[inline]
     pub const fn nth<const C: usize>(&self, n: usize) -> Option<&T> {
         self.arr[n].as_ref()
     }
