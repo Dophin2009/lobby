@@ -130,6 +130,37 @@ mod test {
     }
 
     #[test]
+    fn test_shift() {
+        let mut x = Lobby::new([None, None, None]);
+        x.push(0);
+        x.push(1);
+        x.push(2);
+
+        assert_eq!([Some(0), Some(1), Some(2)], x.arr);
+        assert_eq!((0, 2), (x.head, x.tail));
+
+        let v0 = x.shift();
+        assert_eq!(Some(0), v0);
+        assert_eq!([None, Some(1), Some(2)], x.arr);
+        assert_eq!((1, 2), (x.head, x.tail));
+
+        let v1 = x.shift();
+        assert_eq!(Some(1), v1);
+        assert_eq!([None, None, Some(2)], x.arr);
+        assert_eq!((2, 2), (x.head, x.tail));
+
+        let v2 = x.shift();
+        assert_eq!(Some(2), v2);
+        assert_eq!([None, None, None], x.arr);
+        assert_eq!((2, 2), (x.head, x.tail));
+
+        let ve = x.shift();
+        assert_eq!(None, ve);
+        assert_eq!([None, None, None], x.arr);
+        assert_eq!((2, 2), (x.head, x.tail));
+    }
+
+    #[test]
     fn test_pop() {
         let mut x = Lobby::new([None, None, None]);
         x.push(0);
