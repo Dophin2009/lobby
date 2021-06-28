@@ -83,6 +83,11 @@ impl<T, const N: usize> Lobby<T, N> {
     pub const fn is_empty(&self) -> bool {
         self.head == self.tail && self.arr[self.head].is_none()
     }
+
+    #[inline]
+    pub const fn is_full(&self) -> bool {
+        increment_counter::<N>(self.tail) == self.head
+    }
 }
 
 #[inline]
