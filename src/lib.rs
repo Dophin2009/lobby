@@ -133,6 +133,36 @@ impl<T, const N: usize> Lobby<T, N> {
         self.arr[idx].as_ref()
     }
 
+    /// Get a mutable reference to the nth item. See [`Self::nth`].
+    ///
+    /// ```
+    /// use lobby_queue::Lobby;
+    ///
+    /// let mut lobby = Lobby::new([None, None, None]);
+    ///
+    /// lobby.push(0);
+    /// lobby.push(1);
+    ///
+    /// let v1 = lobby.nth_mut(1).unwrap();
+    /// *v1 = 3;
+    ///
+    /// assert_eq!(Some(&3), lobby.nth(1));
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics under the same conditions as [`Self::nth`].
+    #[inline]
+    pub fn nth_mut(&mut self, n: usize) -> Option<&mut T> {
+        let idx = if n >= N {
+            N
+        } else {
+            Self::mod_incr(self.head, n)
+        };
+
+        self.arr[idx].as_mut()
+    }
+
     /// Push a new item to the lobby, returning the head if the lobby is currently full.
     ///
     /// ```
@@ -332,6 +362,14 @@ impl<T, const N: usize> Lobby<T, N> {
             idx: 0,
         }
     }
+
+    #[inline]
+    pub fn iter_mut(&mut self) -> IterMut<'_, T, N> {
+        IterMut {
+            inner: &mut self.arr,
+            idx: 0,
+        }
+    }
 }
 
 impl<T, const N: usize> IntoIterator for Lobby<T, N> {
@@ -393,6 +431,50 @@ impl<'a, T, const N: usize> Iterator for IterFull<'a, T, N> {
         } else {
             Some(self.inner.nth(self.idx - 1))
         }
+    }
+}
+
+#[derive(Debug)]
+pub struct IterMut<'a, T, const N: usize> {
+    inner: &'a mut [Option<T>; N],
+
+    idx: usize,
+}
+
+impl<'a, T, const N: usize> IterMut<'a, T, N> {
+    #[inline]
+    pub fn with_full(self) -> IterMutFull<'a, T, N> {
+        IterMutFull { iter: self }
+    }
+}
+
+impl<'a, T, const N: usize> Iterator for IterMut<'a, T, N> {
+    type Item = &'a mut T;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.idx >= N {
+            None
+        } else {
+            // SAFETY: self.idx is guaranteed to be within bounds.
+            let v = (unsafe { &mut *self.inner.as_mut_ptr().add(self.idx) }).as_mut();
+            self.idx += 1;
+            v
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct IterMutFull<'a, T, const N: usize> {
+    iter: IterMut<'a, T, N>,
+}
+
+impl<'a, T, const N: usize> Iterator for IterMutFull<'a, T, N> {
+    type Item = Option<&'a mut T>;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(Some)
     }
 }
 
@@ -676,5 +758,20 @@ mod test {
         x.shift();
         assert_eq!(vec![&2, &3], x.iter().collect::<Vec<_>>());
         assert_eq!(vec![2, 3], x.into_iter().collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn test_iter_mut() {
+        let mut x = Lobby::new([None, None, None, None]);
+        x.push(1);
+        x.push(2);
+        x.push(3);
+        x.push(4);
+
+        for v in x.iter_mut() {
+            *v *= 2;
+        }
+
+        assert_eq!(x, [Some(2), Some(4), Some(6), Some(8)]);
     }
 }
