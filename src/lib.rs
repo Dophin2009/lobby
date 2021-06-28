@@ -1,3 +1,6 @@
+//! This crate provides a const-size queue-like data structure. When full, pushing new items will
+//! remove the head (first-added) items.
+
 use std::mem;
 
 /// A const-size queue.
