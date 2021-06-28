@@ -86,7 +86,13 @@ impl<T, const N: usize> Lobby<T, N> {
     /// ```
     #[inline]
     pub const fn nth(&self, n: usize) -> Option<&T> {
-        self.arr[Self::increase_counter(self.head, n)].as_ref()
+        let idx = if n > N {
+            N
+        } else {
+            Self::increase_counter(self.head, n)
+        };
+
+        self.arr[idx].as_ref()
     }
 
     /// Push a new item to the lobby, returning the head if the lobby is currently full.
@@ -231,10 +237,11 @@ impl<T, const N: usize> Lobby<T, N> {
 
     #[inline]
     const fn decrease_counter(counter: usize, d: usize) -> usize {
+        let d = d % N;
         if counter >= d {
             counter - d
         } else {
-            N - ((counter as i32 - d as i32).abs() as usize % N)
+            counter + N - d
         }
     }
 }
@@ -398,5 +405,34 @@ mod test {
         // [_, _, _]
         x.shift();
         assert!(!x.is_full());
+    }
+
+    #[test]
+    fn test_increase_counter() {
+        type L = Lobby<usize, 4>;
+
+        let x = 0;
+        assert_eq!(1, L::increase_counter(x, 1));
+        assert_eq!(2, L::increase_counter(x, 2));
+        assert_eq!(3, L::increase_counter(x, 3));
+        assert_eq!(0, L::increase_counter(x, 4));
+        assert_eq!(1, L::increase_counter(x, 5));
+        assert_eq!(0, L::increase_counter(x, 8));
+        assert_eq!(1, L::increase_counter(x, 9));
+    }
+
+    #[test]
+    fn test_decrease_counter() {
+        type L = Lobby<usize, 4>;
+
+        let x = 2;
+        assert_eq!(1, L::decrease_counter(x, 1));
+        assert_eq!(0, L::decrease_counter(x, 2));
+        assert_eq!(3, L::decrease_counter(x, 3));
+        assert_eq!(2, L::decrease_counter(x, 4));
+        assert_eq!(1, L::decrease_counter(x, 5));
+        assert_eq!(0, L::decrease_counter(x, 6));
+        assert_eq!(2, L::decrease_counter(x, 8));
+        assert_eq!(1, L::decrease_counter(x, 9));
     }
 }
