@@ -185,5 +185,10 @@ mod test {
         assert_eq!(Some(0), v0);
         assert_eq!([None, None, None], x.arr);
         assert_eq!((0, 0), (x.head, x.tail));
+
+        let ve = x.pop();
+        assert_eq!(None, ve);
+        assert_eq!([None, None, None], x.arr);
+        assert_eq!((0, 0), (x.head, x.tail));
     }
 }
