@@ -304,7 +304,19 @@ impl<T, const N: usize> Lobby<T, N> {
             counter + N - d
         }
     }
+}
 
+impl<T, const N: usize> PartialEq<Lobby<T, N>> for Lobby<T, N>
+where
+    T: PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &Lobby<T, N>) -> bool {
+        self.iter().eq(other.iter())
+    }
+}
+
+impl<T, const N: usize> Lobby<T, N> {
     #[inline]
     pub fn iter(&self) -> Iter<'_, T, N> {
         Iter {
@@ -561,6 +573,27 @@ mod test {
         assert_eq!(0, L::mod_decr(x, 6));
         assert_eq!(2, L::mod_decr(x, 8));
         assert_eq!(1, L::mod_decr(x, 9));
+    }
+
+    #[test]
+    fn test_partial_eq() {
+        let mut x = Lobby::new([None, None, None]);
+        let mut y = Lobby::new([None, None, None]);
+
+        x.push(0);
+        x.push(1);
+
+        y.push(0);
+        y.push(1);
+
+        assert!(x == y);
+
+        y.pop();
+        x.push(0);
+        x.shift();
+        x.shift();
+
+        assert!(x == y);
     }
 
     #[test]
