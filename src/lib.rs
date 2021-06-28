@@ -242,7 +242,7 @@ impl<T, const N: usize> Lobby<T, N> {
     /// ```
     #[inline]
     pub const fn is_empty(&self) -> bool {
-        self.head == self.tail && self.arr[self.head].is_none()
+        self.len == 0
     }
 
     /// Returns `true` if the Lobby is full, `false` if it is not.
