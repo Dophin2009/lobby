@@ -53,8 +53,9 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.head]);
 
-        if v.is_some() {
-            self.head = decrement_counter::<N>(self.head);
+        let next = increment_counter::<N>(self.head);
+        if self.arr[next].is_some() {
+            self.head = next;
         }
 
         v
