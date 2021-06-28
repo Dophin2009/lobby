@@ -3,7 +3,7 @@
 
 use std::mem;
 
-/// A const-size queue.
+/// A const-size queue-like data structure.
 #[derive(Debug, Clone)]
 pub struct Lobby<T, const N: usize> {
     arr: [Option<T>; N],
@@ -92,7 +92,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let idx = if n > N {
             N
         } else {
-            Self::increase_counter(self.head, n)
+            Self::mod_incr(self.head, n)
         };
 
         self.arr[idx].as_ref()
@@ -121,7 +121,7 @@ impl<T, const N: usize> Lobby<T, N> {
     pub fn push(&mut self, v: T) -> Option<T> {
         if self.arr[self.tail].is_some() {
             // Increment tail position to insert at next spot.
-            self.tail = Self::increase_counter(self.tail, 1);
+            self.tail = Self::mod_incr(self.tail, 1);
         }
 
         // Make push.
@@ -130,7 +130,7 @@ impl<T, const N: usize> Lobby<T, N> {
 
         // Head position should be moved if the new element overrides an old.
         if v.is_some() {
-            self.head = Self::increase_counter(self.head, 1);
+            self.head = Self::mod_incr(self.head, 1);
         }
 
         v
@@ -156,7 +156,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.head]);
 
-        let next = Self::increase_counter(self.head, 1);
+        let next = Self::mod_incr(self.head, 1);
         if self.arr[next].is_some() {
             self.head = next;
         }
@@ -184,7 +184,7 @@ impl<T, const N: usize> Lobby<T, N> {
         let mut v = None;
         mem::swap(&mut v, &mut self.arr[self.tail]);
 
-        let prev = Self::decrease_counter(self.tail, 1);
+        let prev = Self::mod_decr(self.tail, 1);
         if self.arr[prev].is_some() {
             self.tail = prev;
         }
@@ -230,16 +230,16 @@ impl<T, const N: usize> Lobby<T, N> {
     /// ```
     #[inline]
     pub const fn is_full(&self) -> bool {
-        Self::increase_counter(self.tail, 1) == self.head
+        Self::mod_incr(self.tail, 1) == self.head
     }
 
     #[inline]
-    const fn increase_counter(counter: usize, d: usize) -> usize {
+    const fn mod_incr(counter: usize, d: usize) -> usize {
         (counter + d) % N
     }
 
     #[inline]
-    const fn decrease_counter(counter: usize, d: usize) -> usize {
+    const fn mod_decr(counter: usize, d: usize) -> usize {
         let d = d % N;
         if counter >= d {
             counter - d
@@ -415,13 +415,13 @@ mod test {
         type L = Lobby<usize, 4>;
 
         let x = 0;
-        assert_eq!(1, L::increase_counter(x, 1));
-        assert_eq!(2, L::increase_counter(x, 2));
-        assert_eq!(3, L::increase_counter(x, 3));
-        assert_eq!(0, L::increase_counter(x, 4));
-        assert_eq!(1, L::increase_counter(x, 5));
-        assert_eq!(0, L::increase_counter(x, 8));
-        assert_eq!(1, L::increase_counter(x, 9));
+        assert_eq!(1, L::mod_incr(x, 1));
+        assert_eq!(2, L::mod_incr(x, 2));
+        assert_eq!(3, L::mod_incr(x, 3));
+        assert_eq!(0, L::mod_incr(x, 4));
+        assert_eq!(1, L::mod_incr(x, 5));
+        assert_eq!(0, L::mod_incr(x, 8));
+        assert_eq!(1, L::mod_incr(x, 9));
     }
 
     #[test]
@@ -429,13 +429,13 @@ mod test {
         type L = Lobby<usize, 4>;
 
         let x = 2;
-        assert_eq!(1, L::decrease_counter(x, 1));
-        assert_eq!(0, L::decrease_counter(x, 2));
-        assert_eq!(3, L::decrease_counter(x, 3));
-        assert_eq!(2, L::decrease_counter(x, 4));
-        assert_eq!(1, L::decrease_counter(x, 5));
-        assert_eq!(0, L::decrease_counter(x, 6));
-        assert_eq!(2, L::decrease_counter(x, 8));
-        assert_eq!(1, L::decrease_counter(x, 9));
+        assert_eq!(1, L::mod_decr(x, 1));
+        assert_eq!(0, L::mod_decr(x, 2));
+        assert_eq!(3, L::mod_decr(x, 3));
+        assert_eq!(2, L::mod_decr(x, 4));
+        assert_eq!(1, L::mod_decr(x, 5));
+        assert_eq!(0, L::mod_decr(x, 6));
+        assert_eq!(2, L::mod_decr(x, 8));
+        assert_eq!(1, L::mod_decr(x, 9));
     }
 }
