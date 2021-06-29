@@ -3,7 +3,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lobby = "0.1"
+//! lobby-queue = "0.2"
 //! ```
 //!
 //! ```

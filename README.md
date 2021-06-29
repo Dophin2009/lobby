@@ -13,7 +13,7 @@ Add lobby-queue to your `Cargo.toml`:
 
 ``` toml
 [dependencies]
-lobby-queue = "0.1"
+lobby-queue = "0.2"
 ```
 
 And use it:
