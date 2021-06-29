@@ -320,11 +320,13 @@ impl<T, const N: usize> Lobby<T, N> {
         Self::mod_incr(self.tail, 1) == self.head
     }
 
+    /// Returns the current number of items stored in the lobby.
     #[inline]
     pub const fn len(&self) -> usize {
         self.len
     }
 
+    /// Returns the capacity of the lobby, which will always be `N`.
     #[inline]
     pub const fn capacity(&self) -> usize {
         N
@@ -367,6 +369,7 @@ where
 }
 
 impl<T, const N: usize> Lobby<T, N> {
+    /// Returns an iterator over the items in the lobby.
     #[inline]
     pub fn iter(&self) -> Iter<'_, T, N> {
         Iter {
@@ -375,6 +378,7 @@ impl<T, const N: usize> Lobby<T, N> {
         }
     }
 
+    /// Returns an iterator that allows modifying each value.
     #[inline]
     pub fn iter_mut(&mut self) -> IterMut<'_, T, N> {
         IterMut {
@@ -394,6 +398,7 @@ impl<T, const N: usize> IntoIterator for Lobby<T, N> {
     }
 }
 
+/// Immutable Lobby iterator.
 #[derive(Debug)]
 pub struct Iter<'a, T, const N: usize> {
     inner: &'a Lobby<T, N>,
@@ -402,6 +407,7 @@ pub struct Iter<'a, T, const N: usize> {
 }
 
 impl<'a, T, const N: usize> Iter<'a, T, N> {
+    /// Transforms this iterator into an `IterFull`.
     #[inline]
     pub fn with_full(self) -> IterFull<'a, T, N> {
         IterFull {
@@ -425,6 +431,7 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
     }
 }
 
+/// Immutable Lobby iterator that yields `N` items for each space in the Lobby.
 #[derive(Debug)]
 pub struct IterFull<'a, T, const N: usize> {
     inner: &'a Lobby<T, N>,
@@ -446,6 +453,7 @@ impl<'a, T, const N: usize> Iterator for IterFull<'a, T, N> {
     }
 }
 
+/// Mutable Lobby iterator.
 #[derive(Debug)]
 pub struct IterMut<'a, T, const N: usize> {
     inner: &'a mut [Option<T>; N],
@@ -454,6 +462,7 @@ pub struct IterMut<'a, T, const N: usize> {
 }
 
 impl<'a, T, const N: usize> IterMut<'a, T, N> {
+    /// Transforms this iterator into an [`IterMutFull`].
     #[inline]
     pub fn with_full(self) -> IterMutFull<'a, T, N> {
         IterMutFull { iter: self }
@@ -476,6 +485,7 @@ impl<'a, T, const N: usize> Iterator for IterMut<'a, T, N> {
     }
 }
 
+/// Mutable Lobby iterator that yields `N` items for each space in the Lobby.
 #[derive(Debug)]
 pub struct IterMutFull<'a, T, const N: usize> {
     iter: IterMut<'a, T, N>,
@@ -490,6 +500,7 @@ impl<'a, T, const N: usize> Iterator for IterMutFull<'a, T, N> {
     }
 }
 
+/// Owning Lobby iterator.
 #[derive(Debug)]
 pub struct IntoIter<T, const N: usize> {
     inner: Lobby<T, N>,
@@ -504,12 +515,14 @@ impl<T, const N: usize> Iterator for IntoIter<T, N> {
 }
 
 impl<'a, T, const N: usize> IntoIter<T, N> {
+    /// Transforms this iterator into an [`IntoIterFull`].
     #[inline]
     pub fn with_full(self) -> IntoIterFull<T, N> {
         IntoIterFull { inner: self.inner }
     }
 }
 
+/// Owning Lobby iterator that yields `N` items for each space in the Lobby.
 #[derive(Debug)]
 pub struct IntoIterFull<T, const N: usize> {
     inner: Lobby<T, N>,
