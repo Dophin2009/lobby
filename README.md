@@ -1,6 +1,6 @@
 [![Build status](https://github.com/Dophin2009/lobby-queue/workflows/ci/badge.svg)](https://github.com/Dophin2009/lobby/actions)
-[![Crates.io](https://img.shields.io/crates/v/lobby-queue.svg)](https://crates.io/crates/lobby)
-[![Docs.rs](https://docs.rs/lobby-queue/badge.svg)](https://docs.rs/lobby)
+[![Crates.io](https://img.shields.io/crates/v/lobby-queue.svg)](https://crates.io/crates/lobby-queue)
+[![Docs.rs](https://docs.rs/lobby-queue/badge.svg)](https://docs.rs/lobby-queue)
 
 # lobby-queue
 
