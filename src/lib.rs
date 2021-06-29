@@ -16,8 +16,13 @@
 //! m.push(2);
 //! assert_eq!(Some(&0), m.first());
 //!
-//! m.push(3);
+//! let v0 = m.push(3);
+//! assert_eq!(Some(0), v0);
 //! assert_eq!(Some(&1), m.first());
+//!
+//! for v in m {
+//!     println!("{}", v);
+//! }
 //! ```
 
 pub mod iter;
